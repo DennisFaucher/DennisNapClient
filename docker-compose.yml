@@ -1,0 +1,19 @@
+services:
+  dennisnap-client:
+    build: .
+    container_name: dennisnap-client
+    ports:
+      - "40091:5000"
+    volumes:
+      - ./data:/app/data
+      - /media/asustor/Plex/Music:/music:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    environment:
+      - TZ=America/New_York
+      - PUID=1000
+      - PGID=1000
+      - SERVER_URL=http://host.docker.internal:40090
+      - DOWNLOAD_URL=http://192.168.1.11:40091
+      - USERNAME=

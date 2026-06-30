@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DennisNap Client</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, sans-serif;
+    background: #008080;
+    padding: 16px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .window {
+    background: #d5d2c9;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    box-shadow: 4px 4px 0 rgba(0,0,0,.3);
+    max-width: 1000px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .title-bar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  .title-bar .logo { font-size: 15px; letter-spacing: 1px; }
+  .title-bar .spacer { flex: 1; }
+  .title-bar .win-btns { display: flex; gap: 2px; }
+  .title-bar .win-btn {
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    color: #000;
+    font-size: 11px;
+    width: 16px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: 'Webdings', sans-serif;
+    line-height: 1;
+    padding: 0;
+  }
+  .title-bar .win-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+  .menu-bar {
+    background: #d5d2c9;
+    border-bottom: 1px solid #808080;
+    padding: 2px 4px;
+    display: flex;
+    gap: 2px;
+  }
+  .menu-bar .menu-item {
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #000;
+  }
+  .menu-bar .menu-item:hover {
+    background: #000080;
+    color: #fff;
+  }
+  .toolbar {
+    background: #d5d2c9;
+    border-bottom: 1px solid #808080;
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .toolbar .btn {
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toolbar .btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+  .toolbar .btn .icon { font-size: 14px; }
+  .toolbar .sep {
+    width: 0;
+    height: 22px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    margin: 0 4px;
+  }
+  .content {
+    padding: 8px;
+  }
+  .section {
+    background: #fff;
+    border: 2px inset;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 6px;
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 2px 6px;
+    margin: -8px -8px 6px -8px;
+  }
+  .form-row {
+    display: flex;
+    gap: 6px;
+    align-items: end;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .form-row .field { flex: 1; min-width: 120px; }
+  .form-row .field label {
+    display: block;
+    font-size: 11px;
+    color: #000;
+    margin-bottom: 2px;
+  }
+  .win-input {
+    background: #fff;
+    border: 2px inset;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 2px 4px;
+    font-size: 12px;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+  }
+  .win-input:focus { border-color: #000080; }
+  .win-btn {
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    color: #000;
+    white-space: nowrap;
+  }
+  .win-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+  .win-btn-primary {
+    background: #d5d2c9;
+    border: 2px solid;
+    border-color: #ffffff #000000 #000000 #ffffff;
+    padding: 3px 14px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  .win-btn-primary:active {
+    border-color: #000000 #ffffff #ffffff #000000;
+  }
+  .action-group {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .dl-hint {
+    font-size: 11px;
+    color: #555;
+    margin-top: 2px;
+  }
+  .dl-hint code {
+    background: #f5f5f0;
+    border: 1px solid #c0c0c0;
+    padding: 1px 4px;
+    font-size: 11px;
+  }
+  .folder-tree { margin-top: 4px; }
+  .folder-node { margin-left: 1.5rem; }
+  .folder-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 0;
+    cursor: pointer;
+  }
+  .folder-row:hover { background: #d0d0ff; }
+  .folder-label { flex: 1; font-size: 12px; color: #000; }
+  .folder-toggle {
+    color: #000;
+    width: 14px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+  }
+  .folder-toggle.no-children { color: #808080; cursor: default; }
+  .file-count { color: #555; font-size: 11px; margin-left: 4px; }
+  .selected-count { color: #000; font-size: 11px; margin-top: 4px; }
+  .root-label { font-weight: 600; }
+  .tree-actions {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .table-wrap {
+    background: #fff;
+    border: 2px inset;
+    border-color: #808080 #ffffff #ffffff #808080;
+    overflow-x: auto;
+    margin-top: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  thead th {
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000;
+    text-align: left;
+    white-space: nowrap;
+    cursor: default;
+  }
+  td {
+    padding: 3px 8px;
+    border-bottom: 1px solid #c0c0c0;
+    color: #000;
+  }
+  tr:nth-child(even) td { background: #f5f5f0; }
+  tr:hover td { background: #d0d0ff; }
+  .badge {
+    display: inline-block;
+    background: #d5d2c9;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 1px 8px;
+    font-size: 11px;
+    color: #000;
+  }
+  .status-bar {
+    background: #d5d2c9;
+    border-top: 1px solid #808080;
+    padding: 2px 6px;
+    font-size: 11px;
+    color: #000;
+    display: flex;
+    gap: 12px;
+  }
+  .status-bar .status-item {
+    border-right: 1px solid #808080;
+    padding-right: 8px;
+  }
+  .status-bar .status-item:last-child { border-right: none; }
+  .status-ok { color: #000; }
+  .status-wait { color: #808080; }
+  .empty-msg { text-align: center; color: #808080; padding: 2rem; font-size: 12px; }
+  @media (max-width: 600px) {
+    body { padding: 4px; }
+    .form-row .field { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="title-bar">
+    <img src="https://static.wikia.nocookie.net/lostwaves-finest/images/1/14/Napster_logo.png" style="height:16px;width:auto;" alt="">
+    <span class="logo">DennisNap Client</span>
+    <span style="font-size:11px;font-weight:normal;">— Share your music</span>
+    <span class="spacer"></span>
+    <div class="win-btns">
+      <span class="win-btn" style="font-family:Webdings;">0</span>
+      <span class="win-btn" style="font-family:Webdings;">2</span>
+      <span class="win-btn" style="font-family:Webdings;font-size:13px;">r</span>
+    </div>
+  </div>
+  <div class="menu-bar">
+    <span class="menu-item">File</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="toolbar">
+    <button class="btn" onclick="saveConfig()"><span class="icon">⚙</span> Connect</button>
+    <span class="sep"></span>
+    <button class="btn" onclick="scanNow()"><span class="icon">🔍</span> Rescan</button>
+    <span class="sep"></span>
+    <button class="btn" onclick="logout()"><span class="icon">✕</span> Disconnect</button>
+  </div>
+  <div class="content">
+    <div class="section" id="config-card">
+      <div class="section-title">Configuration</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Server URL</label>
+          <input type="text" id="server-url" class="win-input" value="{{ server_url }}" placeholder="http://dennisnap:5000">
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="username" class="win-input" value="{{ username }}" placeholder="Choose a unique username">
+        </div>
+        <button class="win-btn-primary" onclick="saveConfig()">Save &amp; Connect</button>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Download URL (others download from this address)</label>
+          <input type="text" id="download-url" class="win-input" value="{{ download_url }}" placeholder="http://192.168.1.11:40091">
+        </div>
+      </div>
+      <p class="dl-hint">Set this to <code>http://&lt;your-host-ip&gt;:&lt;this-client-port&gt;</code> so others can download your shared files.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Folder Picker</span>
+        <span style="font-weight:normal;font-size:11px;color:#555;">Select folders to share</span>
+      </div>
+      <div class="tree-actions">
+        <button class="win-btn" onclick="selectAll()">Select All</button>
+        <button class="win-btn" onclick="deselectAll()">Deselect All</button>
+        <button class="win-btn-primary" onclick="saveFolders()">Save Selection</button>
+      </div>
+      <div style="margin-top:4px;">
+        {% for root in music_roots %}
+        <div class="folder-tree" id="tree-{{ loop.index }}"></div>
+        {% endfor %}
+      </div>
+      <div id="selection-info" class="selected-count"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Shared Files</span>
+        <span class="badge" id="file-count">{{ files|length }}</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Filename</th><th>Size</th><th>Type</th></tr></thead>
+          <tbody>
+            {% if files %}
+            {% for f in files %}
+            <tr>
+              <td>{{ f.filename }}</td>
+              <td>{{ "{:,}".format(f.size) }} B</td>
+              <td>{{ f.filename.split('.')[-1] }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr><td colspan="3" class="empty-msg">No music files found. Select folders above and rescan.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section" id="status-card">
+      <div class="section-title">Status</div>
+      <p id="status-text" style="font-size:12px;color:#000;">Checking connection...</p>
+    </div>
+  </div>
+  <div class="status-bar">
+    <span id="status-username" class="status-item">Not connected</span>
+    <span id="status-files" class="status-item">0 files</span>
+  </div>
+</div>
+
+<script>
+  const selected = new Set({{ selected_folders | tojson }});
+
+  async function loadTree(containerId, rootPath) {
+    const cont = document.getElementById(containerId);
+    cont.innerHTML = '<div class="folder-row"><span class="folder-toggle" style="color:#808080;">...</span><span style="color:#808080;font-size:12px;">Loading...</span></div>';
+    await renderBranch(cont, rootPath);
+  }
+
+  async function renderBranch(container, path) {
+    container.innerHTML = '';
+    const res = await fetch('/api/browse?path=' + encodeURIComponent(path));
+    const data = await res.json();
+    const hasSubdirs = data.dirs && data.dirs.length > 0;
+    const checked = selected.has(data.current) ? 'checked' : '';
+
+    const row = document.createElement('div');
+    row.className = 'folder-row';
+
+    const toggle = document.createElement('span');
+    toggle.className = 'folder-toggle' + (hasSubdirs ? '' : ' no-children');
+    toggle.textContent = hasSubdirs ? '▸' : '·';
+    toggle.style.cursor = hasSubdirs ? 'pointer' : 'default';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = checked ? true : false;
+    cb.dataset.path = data.current;
+    cb.style.width = '13px';
+    cb.style.height = '13px';
+    cb.style.margin = '0';
+    cb.style.accentColor = '#000080';
+    cb.addEventListener('change', () => {
+      if (cb.checked) selected.add(data.current);
+      else selected.delete(data.current);
+      updateSelectionInfo();
+    });
+
+    const label = document.createElement('span');
+    label.className = 'folder-label';
+    const isRoot = data.current === '/music' || data.current === '/music/';
+    label.textContent = isRoot ? '/music' : data.current.split('/').pop();
+    if (isRoot) label.style.fontWeight = 'bold';
+
+    const count = document.createElement('span');
+    count.className = 'file-count';
+    count.textContent = data.files.length + ' files';
+
+    row.appendChild(toggle);
+    row.appendChild(cb);
+    row.appendChild(label);
+    row.appendChild(count);
+    container.appendChild(row);
+
+    if (hasSubdirs) {
+      const childCont = document.createElement('div');
+      childCont.className = 'folder-node';
+      childCont.style.display = 'none';
+      container.appendChild(childCont);
+
+      toggle.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (childCont.style.display === 'none') {
+          toggle.textContent = '▾';
+          if (!childCont.hasChildNodes()) {
+            childCont.innerHTML = '<div class="folder-row"><span class="folder-toggle" style="color:#808080;">...</span><span style="color:#808080;font-size:12px;">Loading...</span></div>';
+            childCont.style.display = 'block';
+            for (const d of data.dirs) {
+              const sub = document.createElement('div');
+              sub.className = 'folder-node';
+              childCont.appendChild(sub);
+              await renderBranch(sub, d.path);
+            }
+            const loading = childCont.querySelector('.folder-row');
+            if (loading && loading.textContent.trim() === '... Loading...') loading.remove();
+          } else {
+            childCont.style.display = 'block';
+          }
+        } else {
+          toggle.textContent = '▸';
+          childCont.style.display = 'none';
+        }
+      });
+    }
+
+    updateSelectionInfo();
+  }
+
+  function updateSelectionInfo() {
+    const el = document.getElementById('selection-info');
+    el.textContent = selected.size + ' folder(s) selected';
+  }
+
+  async function saveFolders() {
+    const res = await fetch('/api/shared-folders', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ folders: Array.from(selected) })
+    });
+    if (res.ok) {
+      showStatus('Selection saved. Rescanning...', 'wait');
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      showStatus('Failed to save selection', 'wait');
+    }
+  }
+
+  function selectAll() {
+    document.querySelectorAll('.folder-tree input[type="checkbox"]').forEach(cb => {
+      cb.checked = true;
+      selected.add(cb.dataset.path);
+    });
+    updateSelectionInfo();
+  }
+
+  function deselectAll() {
+    selected.clear();
+    document.querySelectorAll('.folder-tree input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    updateSelectionInfo();
+  }
+
+  async function saveConfig() {
+    const serverUrl = document.getElementById('server-url').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const downloadUrl = document.getElementById('download-url').value.trim();
+    if (!username) { alert('Please enter a username'); return; }
+    if (!serverUrl) { alert('Please enter a server URL'); return; }
+    const body = { server_url: serverUrl, username };
+    if (downloadUrl) body.download_url = downloadUrl;
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      showStatus('Connected!', 'ok');
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showStatus('Failed to save config', 'wait');
+    }
+  }
+
+  async function scanNow() {
+    await fetch('/api/scan', { method: 'POST' });
+    showStatus('Scanning folders...', 'wait');
+    setTimeout(() => location.reload(), 2000);
+  }
+
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' });
+    location.reload();
+  }
+
+  function showStatus(msg, cls) {
+    const el = document.getElementById('status-text');
+    el.textContent = msg;
+    el.className = 'status-' + cls;
+  }
+
+  async function checkStatus() {
+    const res = await fetch('/api/status');
+    const data = await res.json();
+    if (data.username) {
+      let msg = 'Connected as ' + data.username + ' — ' + data.file_count + ' files shared';
+      if (data.download_url) msg += ' | Download URL: ' + data.download_url;
+      showStatus(msg, 'ok');
+      document.getElementById('status-username').textContent = data.username;
+      document.getElementById('status-files').textContent = data.file_count + ' files';
+    } else {
+      showStatus('Not connected to server', 'wait');
+      document.getElementById('status-username').textContent = 'Not connected';
+      document.getElementById('status-files').textContent = '0 files';
+    }
+  }
+
+  checkStatus();
+  {% for root in music_roots %}
+  loadTree('tree-{{ loop.index }}', '{{ root }}');
+  {% endfor %}
+</script>
+</body>
+</html>
