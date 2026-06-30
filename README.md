@@ -2,6 +2,9 @@
 
 Shares your local music folders with a DennisNap server. Scans directories for music files, registers with the server, and serves files for direct download by other users.
 
+<img width="1061" height="637" alt="image" src="https://github.com/user-attachments/assets/ba594e04-13f8-44bc-a051-7cf10dd77450" />
+
+
 ## How it works
 
 - You choose which music folders to share via the web UI
